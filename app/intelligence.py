@@ -91,10 +91,16 @@ campaigns must contain exactly one item per supplied advertising version. Each i
 - scores: clarity, trust, stress, fairness, accessibility, readiness (integers 0-100; higher stress means worse, all others higher means better)
 - risk_level: Low, Medium, or High
 - recommendations: 2-4 precise changes
-- safer_rewrite: improved message, max 60 words
+- safer_rewrite: a materially improved customer-facing message, max 60 words
 portfolio_summary must contain readiness (0-100), top_risks (array), and launch_decision (Ready, Revise, or Hold).
 
-Rules: do not claim approval, guaranteed savings, rates, or eligibility unless explicitly supplied. Do not create sensitive identity labels. Be transparent about customer action and material conditions. Use New Zealand English.
+Rules:
+- Do not claim approval, guaranteed savings, rates, fee status, or eligibility unless explicitly supplied.
+- Never expose an internal segment name or targeting label in customer-facing copy.
+- Avoid pressure or exclusivity language such as "exclusive access", "act now", or "no strings attached".
+- The safer rewrite must directly mitigate the identified risks and must differ materially from an unsafe original.
+- Be transparent about customer action, costs, eligibility, and material conditions.
+- Do not create sensitive identity labels. Use New Zealand English.
 """.strip()
         try:
             response = self._client().converse(
