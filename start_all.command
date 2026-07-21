@@ -33,7 +33,7 @@ if [[ ! -x "$LAB_DIR/.venv/bin/uvicorn" ]]; then
   exit 1
 fi
 
-for required in OPENAI_API_KEY AWS_PROFILE AWS_REGION LEX_BOT_ID LEX_BOT_ALIAS_ID LEX_LOCALE_ID; do
+for required in BEDROCK_EVALUATION_MODEL_ID AWS_PROFILE AWS_REGION LEX_BOT_ID LEX_BOT_ALIAS_ID LEX_LOCALE_ID; do
   if [[ -z "${!required:-}" ]]; then
     echo "Missing required setting in .env: $required"
     exit 1
@@ -96,14 +96,14 @@ if [[ "$SEGMENT_OK" != 1 || "$MARKETING_OK" != 1 || "$LAB_OK" != 1 ]]; then
 fi
 
 LAB_HEALTH=$(curl -fsS http://127.0.0.1:8020/api/health)
-if [[ "$LAB_HEALTH" != *'"openai":"configured"'* || "$LAB_HEALTH" != *'"lex":"configured"'* ]]; then
-  echo "Lab started, but OpenAI or Lex was not loaded from .env:"
+if [[ "$LAB_HEALTH" != *'"bedrock_evaluation":"configured"'* || "$LAB_HEALTH" != *'"lex":"configured"'* ]]; then
+  echo "Lab started, but Bedrock evaluation or Lex was not loaded from .env:"
   echo "$LAB_HEALTH"
   exit 1
 fi
 
 echo
-echo "BNZ demo is running with OpenAI and Lex configured."
+echo "BNZ demo is running with Amazon Bedrock and Lex configured."
 echo "Open: http://127.0.0.1:8020"
 echo "Keep this window open. Press Control-C to stop all services."
 echo "Logs: $LOG_DIR"

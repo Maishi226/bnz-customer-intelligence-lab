@@ -3,9 +3,9 @@ Transform: AWS::Serverless-2016-10-31
 Description: Lex V2 fulfillment for BNZ Customer Intelligence Lab
 
 Parameters:
-  OpenAIModel:
+  BedrockAdvisorModelId:
     Type: String
-    Default: gpt-4.1-mini
+    Default: amazon.nova-lite-v1:0
 
 Resources:
   LexFulfillmentFunction:
@@ -20,11 +20,15 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          OPENAI_MODEL: !Ref OpenAIModel
+          BEDROCK_ADVISOR_MODEL_ID: !Ref BedrockAdvisorModelId
       Policies:
         - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: '*'
 
 Outputs:
   FulfillmentFunctionArn:
     Value: !GetAtt LexFulfillmentFunction.Arn
-

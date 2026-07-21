@@ -5,7 +5,8 @@ import os
 import re
 from typing import Any
 
-from openai import OpenAI
+import boto3
+from botocore.config import Config
 
 
 SEGMENT_HINTS = {
@@ -31,13 +32,24 @@ def _json_from_text(text: str) -> dict[str, Any]:
 
 class IntelligenceService:
     def __init__(self) -> None:
-        self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-        self.client = OpenAI(api_key=self.api_key) if self.api_key else None
+        self.profile = os.getenv("AWS_PROFILE", "").strip()
+        self.region = os.getenv("AWS_REGION", "ap-southeast-2")
+        self.model = os.getenv("BEDROCK_EVALUATION_MODEL_ID", "amazon.nova-lite-v1:0")
 
     @property
     def configured(self) -> bool:
-        return self.client is not None
+        return bool(self.region and self.model)
+
+    def _client(self):
+        session = boto3.Session(
+            profile_name=self.profile or None,
+            region_name=self.region,
+        )
+        return session.client(
+            "bedrock-runtime",
+            region_name=self.region,
+            config=Config(connect_timeout=10, read_timeout=180, retries={"max_attempts": 2}),
+        )
 
     def evaluate_campaigns(
         self,
@@ -47,9 +59,6 @@ class IntelligenceService:
         marketing_campaigns: list[dict[str, Any]],
         persona_count: int,
     ) -> dict[str, Any]:
-        if not self.client:
-            return self._fallback(product, marketing_campaigns, persona_count)
-
         campaign_context = [
             {
                 "segment_id": campaign["segment_id"],
@@ -88,9 +97,14 @@ portfolio_summary must contain readiness (0-100), top_risks (array), and launch_
 Rules: do not claim approval, guaranteed savings, rates, or eligibility unless explicitly supplied. Do not create sensitive identity labels. Be transparent about customer action and material conditions. Use New Zealand English.
 """.strip()
         try:
-            response = self.client.responses.create(model=self.model, input=prompt)
-            result = _json_from_text(response.output_text)
-            result["ai_status"] = f"OpenAI · {self.model}"
+            response = self._client().converse(
+                modelId=self.model,
+                messages=[{"role": "user", "content": [{"text": prompt}]}],
+                inferenceConfig={"maxTokens": 5000, "temperature": 0.35},
+            )
+            output_text = response["output"]["message"]["content"][0]["text"]
+            result = _json_from_text(output_text)
+            result["ai_status"] = f"Amazon Bedrock evaluation · {self.model}"
             return result
         except Exception as exc:  # Demo must remain usable when an external AI call fails.
             result = self._fallback(product, marketing_campaigns, persona_count)

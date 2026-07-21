@@ -18,7 +18,7 @@ async function initialise() {
     $("health").innerHTML = [
       `ML ${health.segmentation}`,
       `Bedrock marketing ${health.marketing_bedrock}`,
-      `Lab evaluator ${health.openai}`,
+      `Bedrock evaluator ${health.bedrock_evaluation}`,
       `Lex ${health.lex}`
     ].map((label) => `<span class="chip ok">${escapeHtml(label)}</span>`).join("");
     if (health.lex !== "configured") {

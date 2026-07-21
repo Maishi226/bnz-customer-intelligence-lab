@@ -18,7 +18,14 @@ def test_segments_have_demo_fallback() -> None:
     assert len(response.json()["segments"]) >= 1
 
 
-def test_campaign_generation_without_external_services() -> None:
+def test_campaign_generation_without_external_services(monkeypatch) -> None:
+    from app.main import intelligence
+
+    monkeypatch.setattr(
+        intelligence,
+        "_client",
+        lambda: (_ for _ in ()).throw(RuntimeError("Bedrock disabled in unit test")),
+    )
     response = client.post(
         "/api/campaigns",
         json={"product": "A transparent savings offer", "segment_ids": [1], "persona_count": 3},
@@ -34,4 +41,3 @@ def test_lex_lambda_local_fallback() -> None:
 
     response = invoke_handler()
     assert response["sessionState"]["intent"]["state"] == "Fulfilled"
-

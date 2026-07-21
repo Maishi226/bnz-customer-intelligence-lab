@@ -2,7 +2,7 @@
 
 An AI-assisted pre-launch assurance layer for personalised banking campaigns, developed for the University of Auckland × BNZ Hackathon.
 
-The Customer Intelligence Lab extends the BNZ AI Marketing Acceleration Platform by testing how different synthetic customers may interpret, trust, or react to each segment-specific advertisement before a campaign is released. It combines behavioural customer segmentation, Amazon Bedrock campaign generation, OpenAI-backed synthetic customer simulation, and an Amazon Lex V2 advisor with AWS Lambda fulfillment.
+The Customer Intelligence Lab extends the BNZ AI Marketing Acceleration Platform by testing how different synthetic customers may interpret, trust, or react to each segment-specific advertisement before a campaign is released. It combines behavioural customer segmentation, Amazon Bedrock campaign generation and synthetic customer simulation, plus an Amazon Lex V2 advisor with AWS Lambda fulfillment.
 
 > This project is an early risk-screening demo. It does not replace customer research, accessibility testing, legal review, compliance approval, or operational readiness checks.
 
@@ -14,7 +14,7 @@ The end-to-end platform is intentionally separated into three services with clea
 |---|---|---:|
 | [`bank-segmentation-service`](https://github.com/Maishi226/bank-segmentation-service) | Produces behavioural customer segments and eligible synthetic customer IDs using K-Means clustering. | `8000` |
 | [`bnz-ai-marketing-hybrid`](https://github.com/Maishi226/bnz-ai-marketing-hybrid) | Retrieves ML audiences and uses Amazon Bedrock to generate a different advertisement for each segment. | `8010` |
-| [`bnz-customer-intelligence-lab`](https://github.com/Maishi226/bnz-customer-intelligence-lab) | Evaluates the finished Bedrock advertisements using synthetic customer reactions and provides a Lex/Lambda campaign advisor. | `8020` |
+| [`bnz-customer-intelligence-lab`](https://github.com/Maishi226/bnz-customer-intelligence-lab) | Uses Amazon Bedrock to evaluate the finished advertisements with synthetic customer reactions and provides a Lex/Lambda campaign advisor. | `8020` |
 
 ## End-to-end workflow
 
@@ -22,7 +22,7 @@ The end-to-end platform is intentionally separated into three services with clea
 2. `bnz-ai-marketing-hybrid` calls `bank-segmentation-service` for behavioural segments and eligible synthetic customer IDs.
 3. Amazon Bedrock generates a distinct advertising version for every selected segment.
 4. The Lab consumes those finished versions without replacing the Bedrock copy.
-5. Synthetic customers evaluate clarity, trust, stress, fairness, accessibility, and overall launch readiness.
+5. A separate Amazon Bedrock evaluation prompt generates synthetic customer reactions and evaluates clarity, trust, stress, fairness, accessibility, and overall launch readiness.
 6. The Lab presents segment-level risks, recommendations, and a safer rewrite for review.
 7. Campaign context is passed to Amazon Lex V2 as a session attribute; Lex invokes AWS Lambda to return a grounded advisor response.
 
@@ -71,7 +71,7 @@ The end-to-end platform is intentionally separated into three services with clea
 - AWS CLI configured with IAM Identity Center (SSO) or another supported credential provider
 - AWS SAM CLI for deploying the Lambda fulfillment hook
 - Access to Amazon Bedrock and Amazon Lex V2 in the configured AWS Region
-- An OpenAI API key for synthetic customer evaluation
+- Amazon Bedrock model access for campaign generation, synthetic customer evaluation, and advisor responses
 
 ## Installation
 
@@ -130,8 +130,7 @@ cp .env.example .env
 Edit the Lab `.env` file:
 
 ```dotenv
-OPENAI_API_KEY=your-openai-api-key
-OPENAI_MODEL=gpt-4.1-mini
+BEDROCK_EVALUATION_MODEL_ID=amazon.nova-lite-v1:0
 
 SEGMENTATION_SERVICE_URL=http://127.0.0.1:8000
 MARKETING_SERVICE_URL=http://127.0.0.1:8010
@@ -173,7 +172,7 @@ The launcher:
 - checks the AWS session;
 - starts all three services;
 - verifies ports `8000`, `8010`, and `8020`;
-- confirms OpenAI and Lex configuration was loaded;
+- confirms Bedrock evaluation and Lex configuration was loaded;
 - opens <http://127.0.0.1:8020>.
 
 Keep the terminal window open while using the platform. Press `Control-C` to stop the services.
@@ -267,13 +266,12 @@ The automated tests cover service health, fallback audiences, campaign evaluatio
 - Amazon Bedrock
 - Amazon Lex V2
 - AWS Lambda and AWS SAM
-- OpenAI Responses API
 - AWS IAM Identity Center (SSO)
 
 ## Future development
 
 - Deploy the three services using AWS Lambda, ECS, or another managed runtime.
-- Store OpenAI credentials in AWS Secrets Manager for deployed environments.
+- Use least-privilege IAM policies for Bedrock, Lex, and Lambda in deployed environments.
 - Add campaign version comparison and human approval workflows.
 - Introduce feedback loops from campaign performance and real customer research.
 - Add automated accessibility and policy regression tests.

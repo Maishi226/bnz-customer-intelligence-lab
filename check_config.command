@@ -13,7 +13,7 @@ check_key() {
 
 echo "BNZ Customer Intelligence Lab configuration"
 echo
-check_key OPENAI_API_KEY
+check_key BEDROCK_EVALUATION_MODEL_ID
 check_key AWS_PROFILE
 check_key AWS_REGION
 check_key LEX_BOT_ID

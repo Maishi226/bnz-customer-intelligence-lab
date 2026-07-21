@@ -8,6 +8,9 @@ def invoke_handler():
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
     spec.loader.exec_module(module)
+    module._bedrock_answer = lambda *_args: (_ for _ in ()).throw(
+        RuntimeError("Bedrock disabled in unit test")
+    )
     return module.handler(
         {
             "inputTranscript": "Why is this risky?",

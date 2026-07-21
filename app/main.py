@@ -35,8 +35,8 @@ async def health() -> dict[str, Any]:
         "status": "ok",
         "segmentation": "live" if await segmentation.health() else "fallback",
         "marketing_bedrock": "live" if await marketing.health() else "fallback",
-        "openai": "configured" if intelligence.configured else "fallback",
-        "openai_model": intelligence.model,
+        "bedrock_evaluation": "configured" if intelligence.configured else "fallback",
+        "bedrock_evaluation_model": intelligence.model,
         "lex": "configured" if lex.configured else "placeholder",
         "lambda": "invoked by Lex fulfillment when configured",
     }
