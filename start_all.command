@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LAB_DIR="/Users/huangmaishi/Documents/Codex/2026-07-21/zhe/outputs/bnz-customer-intelligence-lab"
-SEGMENT_DIR="/Users/huangmaishi/Desktop/bank-segmentation-service"
-MARKETING_DIR="/Users/huangmaishi/Desktop/bnz-ai-marketing-hybrid"
+LAB_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORKSPACE_DIR="$(cd "$LAB_DIR/.." && pwd)"
 LOG_DIR="$LAB_DIR/logs"
 mkdir -p "$LOG_DIR"
 
 set -a
 source "$LAB_DIR/.env"
 set +a
+
+SEGMENT_DIR="${SEGMENT_REPO_DIR:-$WORKSPACE_DIR/bank-segmentation-service}"
+MARKETING_DIR="${MARKETING_REPO_DIR:-$WORKSPACE_DIR/bnz-ai-marketing-hybrid}"
 
 cleanup() {
   echo
