@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lex V2 fulfillment for BNZ Customer Intelligence Lab
+
+Parameters:
+  OpenAIModel:
+    Type: String
+    Default: gpt-4.1-mini
+
+Resources:
+  LexFulfillmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: bnz-customer-lab-lex-fulfillment
+      CodeUri: .
+      Handler: lex_fulfillment.handler
+      Runtime: python3.13
+      Architectures: [arm64]
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          OPENAI_MODEL: !Ref OpenAIModel
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+Outputs:
+  FulfillmentFunctionArn:
+    Value: !GetAtt LexFulfillmentFunction.Arn
+

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BNZ Customer Intelligence Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="mark">BNZ</div><div><h1>Customer Intelligence Lab</h1><p>Audience intelligence → creative generation → synthetic customer assurance</p></div></div>
+    <div id="health" class="health"><span class="chip pending">Connecting…</span></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div><span class="eyebrow">PRE-LAUNCH DECISION SYSTEM</span><h2>Bedrock builds the campaign.<br><em>The Lab tests human impact.</em></h2><p>Bank segmentation selects behavioural audiences, the existing marketing service generates Bedrock ad versions, then this Lab stress-tests every version with synthetic customers.</p></div>
+      <div class="flow"><div><b>01</b><span>Segment</span></div><i>→</i><div><b>02</b><span>Generate</span></div><i>→</i><div><b>03</b><span>Simulate</span></div><i>→</i><div><b>04</b><span>Decide</span></div></div>
+    </section>
+
+    <section class="workspace">
+      <aside class="card setup">
+        <div class="card-head"><div><span class="kicker">CAMPAIGN BRIEF</span><h3>What are we testing?</h3></div><span class="step-badge">01</span></div>
+        <label>Product or offer<textarea id="product">A BNZ personal loan up to NZD 10,000, with repayment estimates shown in the app before the customer applies.</textarea></label>
+        <label>Campaign intent<textarea id="brief">Make the offer relevant and easy to understand without implying guaranteed approval.</textarea></label>
+        <div class="two"><label>Channel<select id="channel"><option>BNZ app notification</option><option>Email</option><option>Online banking card</option><option>SMS</option></select></label><label>Timing<input id="timing" value="When the offer may be relevant"></label></div>
+        <label>Synthetic customers<select id="personaCount"><option>3</option><option selected>5</option><option>6</option><option>8</option></select></label>
+        <div class="segment-title"><b>Behavioural audiences</b><button id="selectAll" class="text-button">Select all</button></div>
+        <div id="segments" class="segments"><div class="skeleton"></div><div class="skeleton"></div></div>
+        <button id="run" class="primary">Send to Bedrock, then test <span>→</span></button>
+        <p id="error" class="error"></p>
+      </aside>
+
+      <section class="results">
+        <div id="empty" class="empty card"><div class="radar"><span></span><span></span><span></span><b>✦</b></div><h3>Your pre-launch evidence will appear here</h3><p>Select audiences and run the Lab to compare creative, customer reactions, risks and safer rewrites.</p></div>
+        <div id="report" hidden>
+          <div class="summary card"><div><span class="kicker">PORTFOLIO DECISION</span><h3 id="decision">—</h3><p id="topRisks">—</p></div><div class="readiness"><div id="readiness">0</div><span>READINESS</span></div></div>
+          <div id="tabs" class="tabs"></div>
+          <div id="campaign"></div>
+        </div>
+      </section>
+
+      <aside class="card advisor">
+        <div class="card-head"><div><span class="kicker">AMAZON LEX + LAMBDA</span><h3>Campaign advisor</h3></div><span class="live-dot"></span></div>
+        <p class="advisor-intro" id="advisorStatus">Ask about the selected audience, customer reactions, launch risks or recommended rewrite. A real reply requires Lex Bot ID, Alias ID, an active AWS session and its Lambda fulfillment hook.</p>
+        <div id="chat" class="chat"><div class="bubble bot">Run a campaign, then ask: “Why is this message medium risk?”</div></div>
+        <form id="chatForm" class="chat-form"><input id="question" placeholder="Ask the advisor…" autocomplete="off"><button aria-label="Send">↑</button></form>
+        <div class="architecture"><span>Web app</span><i>→</i><span>Lex V2</span><i>→</i><span>Lambda</span></div>
+      </aside>
+    </section>
+  </main>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
